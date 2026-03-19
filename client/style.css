@@ -1,0 +1,204 @@
+* {
+  cursor: url(https://cur.cursors-4u.net/people/peo-1/peo4.ani),
+    url(https://cur.cursors-4u.net/people/peo-1/peo4.png), auto !important;
+}
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  justify-content: center;
+  background: url("assets/bg-pc.gif");
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat;
+  color: #e0e0e0;
+  height: 100vh;
+}
+
+/* Start screen */
+#start-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+}
+#player {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 3px solid #0fe;
+  border-radius: 5px;
+  background-color: #1e1e1e;
+  height: 30px;
+  width: 200px;
+  text-transform: uppercase;
+  color: #00ffff;
+  margin-bottom: 20px;
+}
+#start-btn {
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  border: 2px solid #00ffff;
+  background-color: #111;
+  color: #00ffff;
+  box-shadow: 0 0 15px #00ffff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#start-btn:hover {
+  background-color: #00ffff;
+  color: #111;
+  box-shadow: 0 0 25px #00ffff;
+}
+
+/* Main game container */
+#game-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+/* --- Board --- */
+#board {
+  width: 600px;
+  height: 600px;
+  display: grid;
+  padding: 10px;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  border: 3px solid #00ffff;
+  background-color: #1e1e1e;
+  box-shadow: 0 0 20px #00ffff;
+}
+.cell {
+  width: 55px;
+  height: 55px;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cell:nth-child(odd) {
+  background-color: #191919;
+  box-shadow: inset 0 0 10px #00ffff;
+}
+.cell:nth-child(even) {
+  background-color: #111;
+  box-shadow: inset 0 0 10px #ff00ff;
+}
+
+/* --- Quiz container --- */
+#quiz-container {
+  position: absolute;
+  top: 50%;
+  right: 40px;
+  transform: translateY(-50%);
+  width: 400px;
+  padding: 10px;
+  border: 3px solid #ff00ff;
+  background-color: #1e1e1e;
+  box-shadow: 0 0 20px #ff00ff;
+}
+#options {
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+}
+.option {
+  display: block;
+  margin: 5px;
+  padding: 10px;
+  color: #e0e0e0;
+  cursor: pointer;
+  background-color: transparent;
+  box-shadow: 0 0 10px #00ffff;
+  border: 1px solid #0ff;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+.option:hover {
+  border: 1px solid #0ff;
+  background-color: #191919;
+  box-shadow: 0 0 10px #00ff00;
+}
+.option:active {
+  transform: scale(1);
+}
+
+/* --- Answer Feedback --- */
+.option.correct {
+  background-color: darkgreen !important;
+  color: white !important;
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 15px #00ff00;
+}
+.option.wrong {
+  background-color: darkred !important;
+  color: white !important;
+  border: 1px solid #ff0000;
+  box-shadow: 0 0 15px #ff0000;
+}
+
+h1, h2, p, #player {
+  color: #00ffff;
+}
+h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0 40px 0;
+}
+
+button {
+  background-color: #00ff00;
+  color: #121212;
+  border: 2px solid transparent;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 0 10px #00ff00;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+button:hover {
+  background-color: #00ff00;
+  box-shadow: 0 0 10px #00ff00;
+  border: 2px solid white;
+}
+
+/* Player piece */
+.player {
+  width: 40px;
+  height: 40px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+}
+
+/* Sound toggle button */
+#sound-toggle {
+  margin-left: 40px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+footer p { color: #1e1e1e; }
+
+/* --- Mobile View Adjustments --- */
+@media (max-width: 600px) {
+  #game-container { flex-direction: column; align-items: center; gap: 10px; }
+  #board { width: 340px; height: 340px; padding: 2px; }
+  .cell { width: 30px; height: 30px; }
+  #quiz-container { position: static; transform: none; width: 90%; margin-top: 30px; }
+  #options { grid-template-rows: repeat(4, 1fr); grid-template-columns: 1fr; }
+  .option { padding: 8px; font-size: 12px; }
+  h1 { font-size: 24px; margin: 40px 0; }
+  .player { width: 20px; height: 20px; z-index: 99; }
+  .cell-number { font-size: 6px; }
+  #sound-toggle { width: 20px; height: 20px; margin-left: 20px; }
+}

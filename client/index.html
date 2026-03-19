@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bloody Quiz • Single Player</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <!-- Background Music -->
+  <audio id="background-music" src="assets/bgsong.mp3" loop autoplay></audio>
+
+  <h1>
+    Bloody Quiz
+    <button id="sound-toggle">
+      <img id="sound-icon" src="assets/speaker.png" alt="sound control" onerror="this.src='assets/mute.png'"/>
+    </button>
+  </h1>
+
+  <!-- Start screen -->
+  <div id="start-screen">
+    <div id="player">You are Mario 🎮</div>
+    <button id="start-btn">▶ Start Game</button>
+  </div>
+
+  <!-- Game container -->
+  <div id="game-container" style="display:none;">
+    <div id="board"></div>
+    <div id="quiz-container">
+      <p id="timer"></p>
+      <p id="question">Click start to play!</p>
+      <div id="options"></div>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+
+  <footer>
+    <p>© A Code Blooded Product</p>
+  </footer>
+</body>
+</html>
