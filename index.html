@@ -4,39 +4,173 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bloody Quiz • Single Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <!-- Background Music -->
-  <audio id="background-music" src="assets/bgsong.mp3" loop autoplay></audio>
 
-  <h1>
-    Bloody Quiz
-    <button id="sound-toggle">
-      <img id="sound-icon" src="assets/speaker.png" alt="sound control" onerror="this.src='assets/mute.png'"/>
-    </button>
-  </h1>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="drip-bar"  aria-hidden="true"></div>
+  <div id="crack-overlay" aria-hidden="true"></div>
 
-  <!-- Start screen -->
-  <div id="start-screen">
-    <div id="player">You are Mario 🎮</div>
-    <button id="start-btn">▶ Start Game</button>
+  <!-- Countdown overlay -->
+  <div id="countdown-overlay" style="display:none;">
+    <div id="countdown-number">3</div>
   </div>
 
-  <!-- Game container -->
+  <audio id="background-music" src="assets/bgsong.mp3" loop></audio>
+
+  <!-- ═══════ HEADER ═══════ -->
+  <h1>
+    <span class="title-skull">💀</span>
+    <span class="title-text">Bloody Quiz</span>
+    <div class="header-actions" id="header-actions" style="visibility:hidden;">
+      <button id="pause-btn"       title="Pause">⏸</button>
+      <button id="leaderboard-btn" title="Leaderboard">🏆</button>
+      <button id="sound-toggle"    aria-label="Toggle sound">
+        <img id="sound-icon" src="assets/speaker.png" alt="sound" onerror="this.style.display='none';this.parentElement.textContent='🔊'"/>
+      </button>
+    </div>
+  </h1>
+
+  <!-- ═══════ START SCREEN ═══════ -->
+  <div id="start-screen">
+    <div class="start-card">
+      <div class="start-card__deco">⚰️</div>
+      <h2 class="start-card__heading">Enter the Arena</h2>
+
+      <!-- Name -->
+      <div class="name-input-wrap">
+        <label for="player-name-input">Your Name</label>
+        <input type="text" id="player-name-input" placeholder="Enter name..." maxlength="16" autocomplete="off"/>
+      </div>
+
+      <!-- Characters -->
+      <div class="char-select">
+        <p class="char-select__label">Choose Your Character</p>
+        <div class="char-grid">
+          <button class="char-btn active" data-gif="assets/mario.gif" data-emoji="🎮" data-color="#e74c3c" title="Mario">🎮</button>
+          <button class="char-btn"        data-gif=""                 data-emoji="🌿" data-color="#27ae60" title="Luigi">🌿</button>
+          <button class="char-btn"        data-gif=""                 data-emoji="👑" data-color="#f39c12" title="Peach">👑</button>
+          <button class="char-btn"        data-gif=""                 data-emoji="🐉" data-color="#8e44ad" title="Bowser">🐉</button>
+          <button class="char-btn"        data-gif=""                 data-emoji="🦕" data-color="#16a085" title="Yoshi">🦕</button>
+          <button class="char-btn"        data-gif=""                 data-emoji="🍄" data-color="#2980b9" title="Toad">🍄</button>
+        </div>
+        <div id="player" class="player-badge">
+          <span id="player-emoji">🎮</span>
+          <span id="player-display-name">Mario</span>
+        </div>
+      </div>
+
+      <!-- Difficulty -->
+      <div class="difficulty-wrap">
+        <p class="difficulty-label">Difficulty</p>
+        <div class="difficulty-grid">
+          <button class="diff-btn" data-time="10" data-lives="5" data-penalty="3" title="Easy">😊 Easy</button>
+          <button class="diff-btn active" data-time="10" data-lives="3"  data-penalty="3" title="Medium">😤 Medium</button>
+          <button class="diff-btn" data-time="10"  data-lives="1"  data-penalty="5" title="Hard">💀 Hard</button>
+        </div>
+      </div>
+
+      <button id="start-btn">▶ &nbsp;Start Game</button>
+      <p class="start-hint">Answer fast — time left = steps forward!</p>
+    </div>
+  </div>
+
+  <!-- ═══════ GAME ═══════ -->
   <div id="game-container" style="display:none;">
-    <div id="board"></div>
-    <div id="quiz-container">
-      <p id="timer"></p>
-      <p id="question">Click start to play!</p>
-      <div id="options"></div>
+
+    <!-- Stats bar -->
+    <div id="stats-bar">
+      <div class="stat-pill" id="stat-player">
+        <span id="stat-emoji">🎮</span>
+        <span id="stat-name">Player</span>
+      </div>
+      <!-- Lives -->
+      <div class="stat-pill" id="stat-lives">
+        <span id="lives-display">❤️❤️❤️</span>
+      </div>
+      <div class="stat-pill" id="stat-pos">📍 Cell <span id="stat-cell">1</span>/100</div>
+      <div class="stat-pill" id="stat-score">⭐ <span id="stat-score-val">0</span></div>
+      <div class="stat-pill" id="stat-streak">🔥 <span id="stat-streak-val">0</span></div>
+      <div class="stat-pill" id="stat-q">❓ Q<span id="stat-q-val">1</span></div>
+      <button id="in-game-restart-btn" class="stat-pill stat-pill--btn" title="Restart">↺ Restart</button>
+    </div>
+
+    <div id="game-main">
+      <div id="board"></div>
+      <div id="quiz-container">
+        <div id="category-badge" class="category-badge" style="display:none;"></div>
+        <div id="timer-row">
+          <span id="timer">Time Left:</span>
+          <span id="timer-num">10</span>
+        </div>
+        <div id="timer-bar-wrap"><div id="timer-bar"></div></div>
+        <p id="question">Get ready...</p>
+        <div id="options"></div>
+        <div id="streak-banner" class="streak-banner" style="display:none;"></div>
+        <div id="streak-reward-toast" class="streak-reward-toast" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ PAUSE ═══════ -->
+  <div id="pause-screen" style="display:none;">
+    <div class="pause-card">
+      <div class="pause-icon">⏸</div>
+      <h2 class="pause-title">Paused</h2>
+      <p class="pause-sub">Take a breath, warrior.</p>
+      <div class="pause-actions">
+        <button id="resume-btn"        class="btn-blood">▶ Resume</button>
+        <button id="pause-restart-btn" class="btn-ghost">↺ Restart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ END SCREEN ═══════ -->
+  <div id="end-screen" style="display:none;">
+    <canvas id="confetti-canvas"></canvas>
+    <div class="end-card">
+      <div class="end-trophy" id="end-trophy">🏆</div>
+      <h2 class="end-title" id="end-title">YOU WIN!</h2>
+      <p class="end-subtitle" id="end-subtitle">Outstanding!</p>
+      <!-- New best badge -->
+      <div id="new-best-badge" class="new-best-badge" style="display:none;">🏆 NEW BEST SCORE!</div>
+      <div class="end-stats">
+        <div class="end-stat"><span class="end-stat__val" id="end-score">0</span><span class="end-stat__lbl">Score</span></div>
+        <div class="end-stat"><span class="end-stat__val" id="end-correct">0</span><span class="end-stat__lbl">Correct</span></div>
+        <div class="end-stat"><span class="end-stat__val" id="end-accuracy">0%</span><span class="end-stat__lbl">Accuracy</span></div>
+        <div class="end-stat"><span class="end-stat__val" id="end-best-streak">0</span><span class="end-stat__lbl">Best Streak</span></div>
+      </div>
+      <!-- Accuracy bar -->
+      <div class="accuracy-bar-wrap">
+        <div class="accuracy-bar-label">
+          <span>Accuracy</span><span id="accuracy-bar-pct">0%</span>
+        </div>
+        <div class="accuracy-bar-track">
+          <div id="accuracy-bar-fill" class="accuracy-bar-fill"></div>
+        </div>
+      </div>
+      <div class="end-actions">
+        <button id="end-restart-btn"     class="btn-blood">🔄 Play Again</button>
+        <button id="end-leaderboard-btn" class="btn-ghost">🏆 Leaderboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ LEADERBOARD ═══════ -->
+  <div id="leaderboard-modal" style="display:none;">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-card">
+      <button class="modal-close" id="modal-close">✕</button>
+      <h2 class="modal-title">🏆 Hall of Fame</h2>
+      <div id="leaderboard-list"></div>
+      <button class="btn-ghost btn-sm" id="clear-scores-btn">🗑 Clear Scores</button>
     </div>
   </div>
 
   <script type="module" src="script.js"></script>
-
-  <footer>
-    <p>© A Code Blooded Product</p>
-  </footer>
+  <footer><p>© A Code Blooded Product</p></footer>
 </body>
 </html>
