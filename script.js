@@ -16,7 +16,8 @@ let timerDuration   = 10;   // set by difficulty
 let penaltySteps    = 3;    // set by difficulty
 let maxLives        = 3;    // set by difficulty
 let lives           = 3;
-let fiftyPending  = false;  // true = next question gets auto 50/50 + 15s timer
+let fiftyPending = false; // true = next question gets auto 50/50 + 15s timer
+let isBonusQuestion = false; // true = current question is a streak reward question
 let currentQuestionIndex = 0;
 let questions       = [];
 let score           = 0;
@@ -185,7 +186,34 @@ async function loadQuestions() {
 // ══════════════════════════════════════════════════
 startBtn.addEventListener("click", async () => {
   SFX.click();
-  playerName  = nameInput.value.trim() || "Player";
+
+  // Validate name
+  if (!nameInput.value.trim()) {
+    nameInput.classList.add('input-error');
+    nameInput.placeholder = "⚠️ Enter your name first!";
+    nameInput.focus();
+    // Show error text below input
+    let errEl = document.getElementById("name-error");
+    if (!errEl) {
+      errEl = document.createElement("p");
+      errEl.id = "name-error";
+      errEl.className = "name-error-msg";
+      errEl.textContent = "❌ Please enter your player name!";
+      nameInput.parentElement.appendChild(errEl);
+    }
+    // Shake the input
+    nameInput.style.animation = 'none';
+    void nameInput.offsetWidth;
+    nameInput.style.animation = 'inputShake .4s ease';
+    nameInput.addEventListener('input', () => {
+      nameInput.classList.remove('input-error');
+      nameInput.placeholder = "Enter name...";
+      errEl?.remove();
+    }, { once: true });
+    return; // stop here
+  }
+
+  playerName  = nameInput.value.trim();
   playerEmoji = document.querySelector('.char-btn.active')?.dataset.emoji || "🎮";
   playerGif   = document.querySelector('.char-btn.active')?.dataset.gif   || "";
   playerColor = document.querySelector('.char-btn.active')?.dataset.color || "#e74c3c";
@@ -245,7 +273,7 @@ function resetGame() {
   score = 0; correctCount = 0; totalAnswered = 0;
   streak = 0; bestStreak = 0; isWin = false;
   isPaused = false; isHopping = false;
-  lives = maxLives; fiftyPending = false;
+  lives = maxLives; fiftyPending = false; isBonusQuestion = false;
 
   clearInterval(timer); cancelAnimationFrame(timerBarAnim);
   updateBoardInstant();
@@ -363,6 +391,7 @@ function loadQuestion() {
 
   // Auto 50/50: if fiftyPending, eliminate 2 wrong options immediately
   const bonusTimer = fiftyPending;
+  isBonusQuestion = bonusTimer;  // tell checkAnswer not to over-reward
   if (fiftyPending) {
     fiftyPending = false;
     setTimeout(() => {
@@ -468,6 +497,7 @@ function checkAnswer(selected, correct, btn) {
     score += points;
     const bonusText = streak > 1 ? ` 🔥 x${streak} combo! +${streak*5}` : '';
     questionEl.innerHTML = `<span class="feedback feedback--correct">✅ Correct! +${timeLeft*10} pts${bonusText}</span>`;
+    isBonusQuestion = false;
     SFX.correct();
 
     // Every 3rd streak (3, 6, 9, 12...): grant auto 50/50 + 15s for NEXT question
@@ -490,6 +520,7 @@ function checkAnswer(selected, correct, btn) {
   } else {
     btn.classList.add("wrong");
     streak = 0;
+    isBonusQuestion = false;
     Array.from(optionsDiv.children).forEach(b => { if (b.dataset.answer === correct) b.classList.add("correct"); });
     SFX.wrong(); triggerCrack(); updateStats();
 
