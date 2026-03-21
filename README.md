@@ -16,10 +16,6 @@ An interactive browser-based quiz game where the player moves forward by answeri
 * CSS
 * JavaScript
 
-## 📸 Screenshots
-
-(Add screenshots here later)
-
 ## ▶️ How to Run
 
 1. Download or clone the repository
@@ -27,7 +23,7 @@ An interactive browser-based quiz game where the player moves forward by answeri
 
 ## 🌐 Live Demo
 
-(Add link after deploying on GitHub Pages)
+https://yogesh-kk49.github.io/Mario-Quiz-Game/
 
 ## 📌 Future Improvements
 
